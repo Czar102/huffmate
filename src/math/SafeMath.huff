@@ -9,6 +9,10 @@
 #define function safeDiv(uint256,uint256) pure returns (uint256)
 #define function safeMod(uint256,uint256) pure returns (uint256)
 
+#define macro REVERT_NO_MESSAGE() = takes (0) returns (0) {
+    0x00 chainid revert
+}
+
 // Methods - Use these macros directly
 #define macro SAFE_ADD() = takes (2) returns (1) {
     // input stack          // [num1, num2]
@@ -19,7 +23,7 @@
     gt                      // [is_overflow, result]
     iszero                  // [is_not_overflow, result]
     is_not_overflow jumpi   // [result]
-        0x00 chainid revert
+        REVERT_NO_MESSAGE()
     is_not_overflow:        // [result] 
 }
 
@@ -30,7 +34,7 @@
     gt                      // [is_underflow, num1, num2]
     iszero                  // [is_not_underflow, num1, num2]
     is_not_underflow jumpi  // [num1, num2]
-        0x00 chainid revert
+        REVERT_NO_MESSAGE()
     is_not_underflow:       // [num1, num2]
     sub                     // [result]
 }
@@ -51,7 +55,7 @@
     div                         // [div_check, result, num2]
     eq                          // [is_not_overflow, num2]
     is_not_overflow jumpi       // [result]
-        0x00 chainid revert
+        REVERT_NO_MESSAGE()
     is_not_overflow:
 }
 
@@ -60,7 +64,8 @@
     dup2                    // [num2, num1, num2]
                             // [is_not_div_zero, num1, num2]
     is_not_div_zero jumpi
-        0x00 chainid revert
+		// num2 is zero so reverts with 0-length returndata at num1 in memory
+        revert
     is_not_div_zero:
     div                     // [result]
 }
@@ -70,7 +75,8 @@
     dup2                    // [num2, num1, num2]
                             // [is_not_mod_zero, num1, num2]
     is_not_mod_zero jumpi
-        0x00 chainid revert
+		// num2 is zero so reverts with 0-length returndata at num1 in memory
+        revert
     is_not_mod_zero:
     mod                     // [result]
 }
