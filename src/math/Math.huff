@@ -219,7 +219,7 @@
     dup2 dup2 and       // [num1 & num2, num1, num2]
     swap2               // [num2, num1, num1 & num2]
     xor                 // [num2 ^ num1, num1 & num2]
-    0x02 swap1 div      // [num2 ^ num1 / 2, num1 & num2]
+    0x01 shr            // [num2 ^ num1 / 2, num1 & num2]
     add                 // [sum]
 }
 
